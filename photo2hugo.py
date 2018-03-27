@@ -17,6 +17,7 @@ with open('config.yaml') as c:
 source_folder = configs['source_dir']
 dest_folder = configs['content_dir']
 content_file_extension = configs['content_file_extension']
+img_base_url = configs['img_base_url']
 files_list = glob(os.path.join(source_folder, '*.jpg'))
 
 # Use ExifTool to read in metadata
@@ -38,7 +39,9 @@ for m in meta:
     num_files += 1
 
     with open(fpath, 'w') as f:
-        f.write(metadata.process_exif_keys(m, album))
+        f.write(metadata.process_exif_keys(metadata=m,
+                                           album=album,
+                                           img_base_url=img_base_url))
         msg = "Image \"{0}\" written to {1}".format(m['XMP:Title'], fpath)
         print(msg)
 

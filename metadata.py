@@ -34,7 +34,17 @@ def check_key(metadata, key, default_val):
     return(v)
 
 
-def process_exif_keys(metadata, album):
+def build_content(metadata, img_base_url):
+    """Create image link and description for body of content file"""
+    img = "![{0}]({1}/s/{3})".format(metadata['XMP:Title'],
+                                     img_base_url, metadata['File:Filename'])
+    description = check_key(metadata, 'XMP:Description', "Image information")
+    content = "{0}\n\n{1}\n".format(img, description)
+
+    return(content)
+
+
+def process_exif_keys(metadata, album, img_base_url):
     """Pulls in EXIF data for one image and processes the
         relevant keys to make a string to write to YAML block"""
 
@@ -76,6 +86,6 @@ def process_exif_keys(metadata, album):
             out_list.append("{0}: \"{1}\"\n".format(k, v))
 
     out_list.append("---\n\n")
-    out_list.append(description)
+    out_list.append(build_content(metadata, img_base_url))
 
     return("".join(out_list))

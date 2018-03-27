@@ -1,3 +1,4 @@
 source_dir: "/path/to/exported/images"
 content_dir: "/path/to/hugo/content/photo"
+img_base_url: "http://BASE_URL/for/images"
 content_file_extension: "md"
