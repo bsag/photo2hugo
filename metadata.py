@@ -34,11 +34,11 @@ def check_key(metadata, key, default_val):
     return(v)
 
 
-def build_content(metadata, img_base_url):
+def build_content(metadata, description, img_base_url):
     """Create image link and description for body of content file"""
-    img = "![{0}]({1}/s/{3})".format(metadata['XMP:Title'],
-                                     img_base_url, metadata['File:Filename'])
-    description = check_key(metadata, 'XMP:Description', "Image information")
+    img = "![{0}]({1}/xs/{2})".format(metadata['XMP:Title'],
+                                      img_base_url, metadata['File:FileName'])
+    description = description
     content = "{0}\n\n{1}\n".format(img, description)
 
     return(content)
@@ -55,10 +55,13 @@ def process_exif_keys(metadata, album, img_base_url):
     if isinstance(img_tags, str):
         img_tags = "[\"{0}\"]".format(img_tags)
 
-    description = check_key(metadata, 'XMP:Description', "Image information")
+    description = metadata.get('XMP:Description', "Image information")
 
     if description == "":
         description == "Image information"
+
+    if album == "":
+        album == "Other"
 
     meta = dict(
         title=metadata['XMP:Title'],
@@ -72,7 +75,7 @@ def process_exif_keys(metadata, album, img_base_url):
         camera="{0!s} {1}".format(metadata['EXIF:Make'].capitalize(),
                                   metadata['EXIF:Model']),
         tags=img_tags,
-        albums=album,
+        albums="['{0}']".format(album),
         imageurl=metadata['File:FileName']
     )
 
@@ -80,12 +83,12 @@ def process_exif_keys(metadata, album, img_base_url):
     out_list.append("---\n")
 
     for k, v in meta.items():
-        if (k == "tags"):
+        if (k == "tags" | k == "albums"):
             out_list.append("{0}: {1}\n".format(k, v))
         else:
             out_list.append("{0}: \"{1}\"\n".format(k, v))
 
     out_list.append("---\n\n")
-    out_list.append(build_content(metadata, img_base_url))
+    out_list.append(build_content(metadata, description, img_base_url))
 
     return("".join(out_list))

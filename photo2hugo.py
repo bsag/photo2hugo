@@ -14,7 +14,7 @@ with open('config.yaml') as c:
     configs = yaml.safe_load(c)
 
 # Read in the files list from source directory in config file
-source_folder = configs['source_dir']
+source_folder = os.path.join(configs['source_dir'], 'orig')
 dest_folder = configs['content_dir']
 content_file_extension = configs['content_file_extension']
 img_base_url = configs['img_base_url']
